@@ -1,0 +1,25 @@
+#    gentoo-prebuilds: Build automation to optimize the size and build-time
+#    of gentoo-based container images used for C, C++, and eBPF development
+#    Copyright (C) 2024  Michael Przybylski
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License along
+#    with this program; if not, write to the Free Software Foundation, Inc.,
+#    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+FROM gentoo/stage3:@GENTOO_STAGE3_TAG@ as build-libvirt
+
+RUN @GENTOO_REPO_MOUNT_ARG@ @EMERGE_FEATURES@ USE="script" emerge --buildpkg net-dns/dnsmasq &&  \
+    @EMERGE_FEATURES@ USE="pkcs11 tools" emerge --buildpkg net-libs/gnutls && \
+    @EMERGE_FEATURES@ emerge --buildpkg app-emulation/libvirt app-emulation/virt-manager
+
+FROM scratch as final
+COPY --from=build-libvirt    /var/cache/binpkgs /var/cache/binpkgs
