@@ -11,10 +11,14 @@ jobs:
     name: Build and push gentoo mirror image
     runs-on: ubuntu-22.04
     steps:
+      - name: dump docker/daemon.json
+        run: cat /etc/docker/daemon.json
       - name: Check out source code
         uses: actions/checkout@v4
       - name: Enable dockerd containerd image store
         uses: ./.github/actions/enable-dockerd-container-image-store
+      - name: dump docker/daemon.json after attempted modification
+        run: cat /etc/docker/daemon.json
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
