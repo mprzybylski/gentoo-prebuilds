@@ -11,7 +11,10 @@ runs:
   steps:
     - name: Create build directory
       run: mkdir build
+      shell: bash
     - name: Configure build
       run: cmake -B build -S . ${{ inputs.config_args }}
+      shell: bash
     - name: Build target
       run: cmake --build build --target ${{ inputs.target }}
+      shell: bash
