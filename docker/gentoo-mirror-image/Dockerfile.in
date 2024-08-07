@@ -16,9 +16,9 @@
 #    with this program; if not, write to the Free Software Foundation, Inc.,
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 ARG STAGE3_TAG
-FROM gentoo/stage3:@GENTOO_STAGE3_TAG@ as emerge-sync
+FROM gentoo/stage3:@GENTOO_STAGE3_TAG@ as emaint-sync
 
-RUN emerge --sync
+RUN emaint sync -a
 
 FROM scratch as final
-COPY --from=emerge-sync /var/db/repos/gentoo /var/db/repos/gentoo
+COPY --from=emaint-sync /var/db/repos/gentoo /var/db/repos/gentoo

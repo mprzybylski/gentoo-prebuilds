@@ -24,7 +24,7 @@ RUN @GENTOO_REPO_MOUNT_ARG@ @EMERGE_FEATURES@ emerge --buildpkg \
     sys-devel/crossdev app-eselect/eselect-repository dev-vcs/git
 
 RUN eselect repository add rescued-ebuilds git https://github.com/mprzybylski/rescued-ebuilds.git && \
-    emerge --sync rescued-ebuilds
+    emaint sync -r rescued-ebuilds
 
 RUN eselect repository create crossdev
 
