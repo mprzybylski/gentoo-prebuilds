@@ -11,13 +11,15 @@ jobs:
     name: Build and push gentoo mirror image
     runs-on: ubuntu-22.04
     steps:
+      - name: Check out source code
+        uses: actions/checkout@v4
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Checkout, build, and push gentoo-mirror-image
-        uses: ./.github/actions/checkout-build-cmake-target@add-github-actions
+        uses: ./.github/actions/checkout-build-cmake-target
         with:
           target: push-gentoo-mirror-image
           config_args: -DBUILD_NUMBER=${{ github.run_attempt }}
