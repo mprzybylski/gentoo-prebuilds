@@ -23,9 +23,93 @@ jobs:
         with:
           target: push-gentoo-mirror-image
           config_args: -DBUILD_NUMBER=${{ github.run_attempt }}
-
-  # build and push gentoo-custom-toolchain
-  # build and push gentoo-libbpf-dev-tools
-  # build and push gentoo-libvirt
-  # build and push gentoo-vcpkg-bootstrap-prereqs
-  # build and push gentoo-with-binpkgs
+  build_gentoo_custom_toolchain:
+    name: Build and push gentoo custom toolchain
+    needs: build_gentoo_mirror_image
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v4
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Checkout, build, and push gentoo-mirror-image
+        uses: ./.github/actions/checkout-build-cmake-target
+        with:
+          target: push-gentoo-custom-toolchain
+          config_args: -DBUILD_NUMBER=${{ github.run_attempt }}
+  build_and_push_gentoo_libbpf_dev_tools:
+    name: Build and push gentoo libbpf developer tools
+    needs: build_gentoo_mirror_image
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v4
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Checkout, build, and push gentoo-mirror-image
+        uses: ./.github/actions/checkout-build-cmake-target
+        with:
+          target: push-gentoo-libbpf-dev-tools
+          config_args: -DBUILD_NUMBER=${{ github.run_attempt }}
+  build_and_push_gentoo_libvirt:
+    name: Build and push gentoo libvirt and virt-manager
+    needs: build_gentoo_mirror_image
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v4
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Checkout, build, and push gentoo-mirror-image
+        uses: ./.github/actions/checkout-build-cmake-target
+        with:
+          target: push-gentoo-libvirt
+          config_args: -DBUILD_NUMBER=${{ github.run_attempt }}
+  build_and_push_gentoo_vcpkg_bootstrap_prereqs:
+    name: Build and push prerequsite packages for vcpkg bootstrap
+    needs: build_gentoo_mirror_image
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v4
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Checkout, build, and push gentoo-mirror-image
+        uses: ./.github/actions/checkout-build-cmake-target
+        with:
+          target: push-gentoo-vcpkg-bootstrap-prereqs
+          config_args: -DBUILD_NUMBER=${{ github.run_attempt }}
+  build_and_push_gentoo_with_binpkgs:
+    name: Build and push gentoo-with-binpkgs container image
+    needs:
+      - build_gentoo_mirror_image
+      - build_gentoo_custom_toolchain
+      - build_and_push_gentoo_libbpf_dev_tools
+      - build_and_push_gentoo_libvirt
+      - build_and_push_gentoo_vcpkg_bootstrap_prereqs
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v4
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Checkout, build, and push gentoo-mirror-image
+        uses: ./.github/actions/checkout-build-cmake-target
+        with:
+          target: push-gentoo-with-binpkgs
+          config_args: -DBUILD_NUMBER=${{ github.run_attempt }}
