@@ -27,12 +27,15 @@ endforeach()
 if("$ENV{CI}" STREQUAL true)
     add_docker_build(gentoo-with-binpkgs "${CMAKE_CURRENT_BINARY_DIR}"
             TAG "${IMAGE_NAME}"
-            CACHE_TO_REGISTRY "${IMAGE_NAME}:${CACHE_TO_TAG}"
-            CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS})
+# Depends on docker feature that isn't enabled in GHA runners yet
+# See https://docs.docker.com/storage/containerd/ for more info
+#            CACHE_TO_REGISTRY "${IMAGE_NAME}:${CACHE_TO_TAG}"
+#            CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS}
+    )
 else()
     add_docker_build(gentoo-with-binpkgs "${CMAKE_CURRENT_BINARY_DIR}"
             TAG "${IMAGE_NAME}"
-            CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS}
+#            CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS}
             DEPENDS gentoo-mirror-image gentoo-libbpf-dev-tools gentoo-libvirt gentoo-custom-toolchain
                 gentoo-vcpkg-bootstrap-prereqs)
 endif ()
