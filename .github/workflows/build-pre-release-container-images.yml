@@ -11,6 +11,8 @@ jobs:
     name: Build and push gentoo mirror image
     runs-on: ubuntu-22.04
     steps:
+      - name: Enable dockerd containerd image store
+        uses: ./.github/actions/enable-dockerd-container-image-store
       - name: Check out source code
         uses: actions/checkout@v4
       - name: Login to DockerHub
@@ -28,6 +30,8 @@ jobs:
     needs: build_gentoo_mirror_image
     runs-on: ubuntu-22.04
     steps:
+      - name: Enable dockerd containerd image store
+        uses: ./.github/actions/enable-dockerd-container-image-store
       - name: Check out source code
         uses: actions/checkout@v4
       - name: Login to DockerHub
@@ -45,6 +49,8 @@ jobs:
     needs: build_gentoo_mirror_image
     runs-on: ubuntu-22.04
     steps:
+      - name: Enable dockerd containerd image store
+        uses: ./.github/actions/enable-dockerd-container-image-store
       - name: Check out source code
         uses: actions/checkout@v4
       - name: Login to DockerHub
@@ -62,6 +68,8 @@ jobs:
     needs: build_gentoo_mirror_image
     runs-on: ubuntu-22.04
     steps:
+      - name: Enable dockerd containerd image store
+        uses: ./.github/actions/enable-dockerd-container-image-store
       - name: Check out source code
         uses: actions/checkout@v4
       - name: Login to DockerHub
@@ -79,6 +87,8 @@ jobs:
     needs: build_gentoo_mirror_image
     runs-on: ubuntu-22.04
     steps:
+      - name: Enable dockerd containerd image store
+        uses: ./.github/actions/enable-dockerd-container-image-store
       - name: Check out source code
         uses: actions/checkout@v4
       - name: Login to DockerHub
@@ -101,6 +111,8 @@ jobs:
       - build_and_push_gentoo_vcpkg_bootstrap_prereqs
     runs-on: ubuntu-22.04
     steps:
+      - name: Enable dockerd containerd image store
+        uses: ./.github/actions/enable-dockerd-container-image-store
       - name: Check out source code
         uses: actions/checkout@v4
       - name: Login to DockerHub
