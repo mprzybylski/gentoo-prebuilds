@@ -18,10 +18,25 @@
 
 configure_file(Dockerfile.in Dockerfile @ONLY)
 
-if(NOT "$ENV{CI}" STREQUAL true)
-    set(TOOLCHAIN_DEPENDS gentoo-mirror-image)
+set(IMAGE_NAME "${DOCKER_REPO_PREFIX}/gentoo-custom-toolchain")
+
+foreach(TAG ${CACHE_FROM_TAGS})
+    list(APPEND CACHE_FROM_REFS "${IMAGE_NAME}:${TAG}")
+endforeach()
+
+if("$ENV{CI}" STREQUAL true)
+    # The github actions workflow will enforce proper dependency ordering.  Also, push build layers to cache.
+    add_docker_build(gentoo-custom-toolchain "${CMAKE_CURRENT_BINARY_DIR}"
+            TAG "${IMAGE_NAME}:${PUSH_TAG}"
+            CACHE_TO_REGISTRY "${IMAGE_NAME}:${CACHE_TO_TAG}"
+            CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS})
+else()
+    add_docker_build(gentoo-custom-toolchain "${CMAKE_CURRENT_BINARY_DIR}"
+            TAG "${IMAGE_NAME}:${PUSH_TAG}"
+            CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS}
+            DEPENDS gentoo-mirror-image)
 endif()
 
-add_docker_build(gentoo-custom-toolchain "${CMAKE_CURRENT_BINARY_DIR}"
-        TAG "${DOCKER_REPO_PREFIX}/gentoo-custom-toolchain:${GENTOO_STAGE3_TAG}"
-        DEPENDS ${TOOLCHAIN_DEPENDS})
+add_custom_target(push-gentoo-custom-toolchain
+        COMMAND docker push "${IMAGE_NAME}:${PUSH_TAG}"
+        DEPENDS gentoo-custom-toolchain)

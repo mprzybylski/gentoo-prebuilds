@@ -17,5 +17,23 @@
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 configure_file(Dockerfile.in Dockerfile @ONLY)
 
-add_docker_build(gentoo-mirror-image "${CMAKE_CURRENT_BINARY_DIR}"
-        TAG "${DOCKER_REPO_PREFIX}/gentoo-mirror-image:${GENTOO_STAGE3_TAG}")
+set(IMAGE_NAME "${DOCKER_REPO_PREFIX}/gentoo-mirror-image")
+
+foreach(TAG ${CACHE_FROM_TAGS})
+    list(APPEND CACHE_FROM_REFS "${IMAGE_NAME}:${TAG}")
+endforeach()
+
+if("$ENV{CI}" STREQUAL true)
+    add_docker_build(gentoo-mirror-image "${CMAKE_CURRENT_BINARY_DIR}"
+            CACHE_TO_REGISTRY "${IMAGE_NAME}:${CACHE_TO_TAG}"
+            CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS}
+            TAG "${IMAGE_NAME}:${PUSH_TAG}")
+else()
+    add_docker_build(gentoo-mirror-image "${CMAKE_CURRENT_BINARY_DIR}"
+            CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS}
+            TAG "${IMAGE_NAME}:${PUSH_TAG}")
+endif()
+
+add_custom_target(push-gentoo-mirror-image
+        COMMAND docker push "${IMAGE_NAME}"
+        DEPENDS gentoo-mirror-image)

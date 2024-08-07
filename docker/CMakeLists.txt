@@ -15,7 +15,7 @@
 #    You should have received a copy of the GNU General Public License along
 #    with this program; if not, write to the Free Software Foundation, Inc.,
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-set(GENTOO_REPO_MOUNT_ARG "--mount=type=bind,from=${DOCKER_REPO_PREFIX}/gentoo-mirror-image:${GENTOO_STAGE3_TAG},source=/var/db/repos/gentoo,target=/var/db/repos/gentoo,rw")
+set(GENTOO_REPO_MOUNT_ARG "--mount=type=bind,from=${DOCKER_REPO_PREFIX}/gentoo-mirror-image:${PUSH_TAG},source=/var/db/repos/gentoo,target=/var/db/repos/gentoo,rw")
 set(EMERGE_FEATURES "FEATURES='-ipc-sandbox -network-sandbox -pid-sandbox'")
 
 add_subdirectory(gentoo-mirror-image)

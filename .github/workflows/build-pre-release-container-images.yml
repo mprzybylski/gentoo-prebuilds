@@ -1,0 +1,29 @@
+name: "Build pre-release container images"
+on:
+  push:
+    branches:
+      - main
+      - release-*
+  pull_request: {}
+jobs:
+  # build and push gentoo-mirror-image
+  build_gentoo_mirror_image:
+    name: Build and push gentoo mirror image
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Checkout, build, and push gentoo-mirror-image
+        uses: ./.github/actions/checkout-build-cmake-target
+        with:
+          target: push-gentoo-mirror-image
+          config_args: -DBUILD_NUMBER=${{ github.run_attempt }}
+
+  # build and push gentoo-custom-toolchain
+  # build and push gentoo-libbpf-dev-tools
+  # build and push gentoo-libvirt
+  # build and push gentoo-vcpkg-bootstrap-prereqs
+  # build and push gentoo-with-binpkgs

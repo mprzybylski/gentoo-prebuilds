@@ -35,8 +35,8 @@ function(add_docker_build)
             PARSE_ARGV 2 # Start parsing at 3rd arg.
             ADB #result variable prefix
             "" #options, (keywords without values)
-            "TAG;DOCKERFILE" #one-value keywords
-            "BUILD_ARGS;DEPENDS" #multi-value keywords
+            "TAG;DOCKERFILE;CACHE_TO_REGISTRY" #one-value keywords
+            "BUILD_ARGS;DEPENDS;CACHE_FROM_REGISTRIES" #multi-value keywords
     )
 
     # Populate the build command
@@ -47,6 +47,12 @@ function(add_docker_build)
     if(ADB_DOCKERFILE)
         list(APPEND DOCKER_BUILD_CMD --file "${ADB_DOCKERFILE}")
     endif()
+    if(ADB_CACHE_TO_REGISTRY)
+        list(APPEND DOCKER_BUILD_CMD --cache-to "type=registry,ref=${ADB_CACHE_TO_REGISTRY},mode=max")
+    endif()
+    foreach(REGISTRY ${ADB_CACHE_FROM_REGISTRIES})
+        list(APPEND DOCKER_BUILD_CMD --cache-from "type=registry,ref=${REGISTRY}")
+    endforeach()
     foreach(BUILD_ARG ${ADB_BUILD_ARGS})
         list(APPEND DOCKER_BUILD_CMD --build-arg "${BUILD_ARG}")
         message("Adding build arg '${BUILD_ARG}' to target: ${TARGET_NAME}")

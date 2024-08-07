@@ -1,0 +1,19 @@
+name: Checkout and build cmake target
+inputs:
+  target:
+    required: true
+    description: The CMake target name to build
+  config_args:
+    required: false
+    description: A space-separated list of arguments to pass to the CMake configuration step.
+runs:
+  using: "composite"
+  steps:
+    - name: Check out source code
+      uses: actions/checkout@v4
+    - name: Create build directory
+      run: mkdir build
+    - name: Configure build
+      run: cmake -B build -S . ${{ inputs.config_args }}
+    - name: Build target
+      run: cmake --build build --target ${{ inputs.target }}

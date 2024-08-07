@@ -17,10 +17,25 @@
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 configure_file(Dockerfile.in Dockerfile @ONLY)
 
-if(NOT "$ENV{CI}" STREQUAL true)
-    set(VCPKG_BOOTSTRAP_PREREQS gentoo-mirror-image)
+set(IMAGE_NAME "${DOCKER_REPO_PREFIX}/gentoo-vcpkg-bootstrap-prereqs")
+
+foreach(TAG ${CACHE_FROM_TAGS})
+    list(APPEND CACHE_FROM_REFS "${IMAGE_NAME}:${TAG}")
+endforeach()
+
+if("$ENV{CI}" STREQUAL true)
+    # The github actions workflow will enforce proper dependency ordering.  Also, push build layers to cache.
+    add_docker_build(gentoo-vcpkg-bootstrap-prereqs "${CMAKE_CURRENT_BINARY_DIR}"
+            TAG "${IMAGE_NAME}:${PUSH_TAG}"
+            CACHE_TO_REGISTRY "${IMAGE_NAME}:${CACHE_TO_TAG}"
+            CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS})
+else()
+    add_docker_build(gentoo-vcpkg-bootstrap-prereqs "${CMAKE_CURRENT_BINARY_DIR}"
+            TAG "${IMAGE_NAME}:${PUSH_TAG}"
+            CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS}
+            DEPENDS gentoo-mirror-image)
 endif()
 
-add_docker_build(gentoo-vcpkg-bootstrap-prereqs "${CMAKE_CURRENT_BINARY_DIR}"
-        TAG "${DOCKER_REPO_PREFIX}/gentoo-vcpkg-bootstrap-prereqs:${GENTOO_STAGE3_TAG}"
-        DEPENDS ${VCPKG_BOOTSTRAP_PREREQS})
+add_custom_target(push-gentoo-vcpkg-bootstrap-prereqs
+        COMMAND docker push "${IMAGE_NAME}"
+        DEPENDS gentoo-vcpkg-bootstrap-prereqs)
