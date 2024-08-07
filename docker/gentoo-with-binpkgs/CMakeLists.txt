@@ -18,7 +18,7 @@
 configure_file(Dockerfile.in Dockerfile @ONLY)
 
 
-set(IMAGE_NAME "${DOCKER_REPO_PREFIX}/gentoo-with-binpkgs:${PUSH_TAG}")
+set(IMAGE_NAME "${DOCKER_REPO_PREFIX}/gentoo-with-binpkgs")
 
 foreach(TAG ${CACHE_FROM_TAGS})
     list(APPEND CACHE_FROM_REFS "${IMAGE_NAME}:${TAG}")
@@ -26,13 +26,13 @@ endforeach()
 
 if("$ENV{CI}" STREQUAL true)
     add_docker_build(gentoo-with-binpkgs "${CMAKE_CURRENT_BINARY_DIR}"
-            TAG "${IMAGE_NAME}"
+            TAG "${IMAGE_NAME}:${PUSH_TAG}"
             CACHE_TO_REGISTRY "${IMAGE_NAME}:${CACHE_TO_TAG}"
             CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS}
     )
 else()
     add_docker_build(gentoo-with-binpkgs "${CMAKE_CURRENT_BINARY_DIR}"
-            TAG "${IMAGE_NAME}"
+            TAG "${IMAGE_NAME}:${PUSH_TAG}"
             CACHE_FROM_REGISTRIES ${CACHE_FROM_REFS}
             DEPENDS gentoo-mirror-image gentoo-libbpf-dev-tools gentoo-libvirt gentoo-custom-toolchain
                 gentoo-vcpkg-bootstrap-prereqs)

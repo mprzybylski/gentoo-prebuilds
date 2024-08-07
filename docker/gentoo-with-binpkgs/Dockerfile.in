@@ -23,5 +23,5 @@ COPY --from=@DOCKER_REPO_PREFIX@/gentoo-libvirt:@PUSH_TAG@ /var/cache/binpkgs /v
 COPY --from=@DOCKER_REPO_PREFIX@/gentoo-custom-toolchain:@PUSH_TAG@ /var/cache/binpkgs /var/cache/binpkgs
 COPY --from=@DOCKER_REPO_PREFIX@/gentoo-vcpkg-bootstrap-prereqs:@PUSH_TAG@ /var/cache/binpkgs /var/cache/binpkgs
 # This important
-# /var/cache/binpkgs/Packages will only list hte packages copied in with the last COPY command above without it.
+# /var/cache/binpkgs/Packages will only list the packages copied in with the last COPY command above without it.
 RUN emaint -f binhost
