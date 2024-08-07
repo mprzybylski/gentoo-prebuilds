@@ -40,5 +40,5 @@ else()
 endif()
 
 add_custom_target(push-gentoo-libvirt
-        COMMAND docker push "${IMAGE_NAME}"
+        COMMAND docker push "${IMAGE_NAME}:${PUSH_TAG}"
         DEPENDS gentoo-libvirt)

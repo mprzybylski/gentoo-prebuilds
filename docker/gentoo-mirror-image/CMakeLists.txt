@@ -37,5 +37,5 @@ else()
 endif()
 
 add_custom_target(push-gentoo-mirror-image
-        COMMAND docker push "${IMAGE_NAME}"
+        COMMAND docker push "${IMAGE_NAME}:${PUSH_TAG}"
         DEPENDS gentoo-mirror-image)
