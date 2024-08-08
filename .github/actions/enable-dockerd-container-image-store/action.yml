@@ -1,0 +1,12 @@
+name: Enable dockerd container image store
+runs:
+  using: "composite"
+  steps:
+    - name: Modify docker daemon.json and restart docker daemon
+      shell: bash
+      run: |
+        cd /etc/docker
+        sudo mv daemon.json daemon.json.bak
+        jq '.+{"features":(.features + {"containerd-snapshotter": true})}' <daemon.json.bak | \
+            sudo tee /etc/docker/daemon.json
+        sudo systemctl restart docker

@@ -4,12 +4,12 @@ Pre-built packages to reduce build time and image size for gentoo-based
 container images.
 
 ## Usage
-### 1. Use `mprzybylski/gentoo-prebuilds/gentoo-with-binpkgs:<date_code_tag>` as the base image
+### 1. Use `mikeprz/gentoo-with-binpkgs:<date_code_tag>` as the base image
 This is based on the `gentoo/stage3` image with `emerge --sync` already run, and pre-built, binary
 packages stored in `/var/cache/binpkgs`
 
 Its tags track the simple, date-coded tags in https://hub.docker.com/r/gentoo/stage3/tags like `20240729` or
-`20240805`
+`20240805` and adds a pre-release `-snapshot` suffix serial number suffix like `20240729-2` or `20240805-snapshot`
 
 ### 2. Run `emerge` and `crossdev` commands with the `--usepkgonly` flag
 
@@ -28,10 +28,10 @@ A simple way to accomplish this is to create a temporary container, `docker expo
 and then pipe `tar`'s output to `docker import - ...`, i.e.:
 
 ```shell
-CONTAINER_ID="$(docker create "mprzybylski/bpf-iotrace/fat-dev-image:20240729")"
+CONTAINER_ID="$(docker create "mikeprz/bpf-iotrace-fat-dev-image:20240729")"
 docker export $CONTAINER_ID | \
     tar --wildcards --delete 'var/db/repos/*' --delete 'var/cache/binpkgs/*' | \
-    docker import - "mprzybylski/bpf-iotrace/dev-image:20240729"
+    docker import - "mikeprz/bpf-iotrace-dev-image:20240729"
 ```
 
 Don't forget to remove the temporary container after this operation is complete.
@@ -40,8 +40,8 @@ The results speak for themselves:
 ```text
 mikep@thinky-winks:~$ docker image ls
 REPOSITORY                                  TAG        IMAGE ID       CREATED          SIZE
-mprzybylski/bpf-iotrace/dev-image           20240729   78909a47c2f5   26 minutes ago   2.64GB
-mprzybylski/bpf-iotrace/fat-dev-image       20240729   bb1260d99fcb   27 minutes ago   3.45GB
+mikeprz/bpf-iotrace-dev-image           20240729   78909a47c2f5   26 minutes ago   2.64GB
+mikeprz/bpf-iotrace-fat-dev-image       20240729   bb1260d99fcb   27 minutes ago   3.45GB
 ...
 ```
 
